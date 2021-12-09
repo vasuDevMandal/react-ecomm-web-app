@@ -28,4 +28,16 @@ const cartItemJson = {
 
 const userCollection = "users";
 
-export { firebaseConfig, userJson, cartItemJson, userCollection };
+const itemCategories = ["electronics", "jewelery"];
+
+const logoUrl =
+  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFN6By6MTnRck1md5Ib6lGCRlhqhu5X8eWMA&usqp=CAU";
+
+export {
+  firebaseConfig,
+  userJson,
+  cartItemJson,
+  userCollection,
+  logoUrl,
+  itemCategories,
+};

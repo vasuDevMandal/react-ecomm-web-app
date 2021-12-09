@@ -1,12 +1,12 @@
 import { getAuth } from "@firebase/auth";
 import { CircularProgress, Box } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import AppContainer from "../components/AppContainer";
 import getSignedInUser from "../helperFunctions/getSignedInUser";
 import style from "../styles/MainPage.module.css";
 
-export default function MainPAge(props) {
+function MainPage(props) {
   const history = useHistory();
   const user = useRef(null);
   const [showLoading, setShowLoading] = useState(true);
@@ -23,11 +23,8 @@ export default function MainPAge(props) {
         setShowLoading(false);
         history.push("/login");
       });
-
-    return () => {
-      // cleanup
-    };
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <React.Fragment>
@@ -44,3 +41,5 @@ export default function MainPAge(props) {
     </React.Fragment>
   );
 }
+
+export default MainPage;

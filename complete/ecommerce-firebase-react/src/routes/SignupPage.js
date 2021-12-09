@@ -2,15 +2,14 @@ import React, { useState, useRef } from "react";
 import {
   Box,
   OutlinedInput,
-  InputAdornment,
   FormControl,
   InputLabel,
+  InputAdornment,
   Button,
-  Snackbar,
   Typography,
+  Snackbar,
   styled,
 } from "@mui/material";
-
 import {
   Email,
   Lock,
@@ -18,14 +17,13 @@ import {
   VisibilityOff,
   AccountCircle,
 } from "@mui/icons-material";
-import { userJson, userCollection } from "../Constants";
-import style from "../styles/Registration.module.css";
-import Alert from "../components/Alert";
-
-import { Link, useHistory } from "react-router-dom";
+import { initializeFirestore } from "../helperFunctions/firebase";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { initializeFirestore } from "../helperFunctions/Firebase";
+import { Link, useHistory } from "react-router-dom";
+import Alert from "../components/Alert";
+import { userCollection, userJson } from "../Constants";
+import style from "../styles/Registration.module.css";
 
 const OutlinedTextInput = styled(OutlinedInput)({
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -34,36 +32,36 @@ const OutlinedTextInput = styled(OutlinedInput)({
 });
 
 const Label = styled(InputLabel)({
-  "&.MuiinputLabel-root.Mui-focused": {
-    borderColor: "#df5689",
+  "&.MuiInputLabel-root.Mui-focused": {
+    color: "#0088a9",
   },
 });
 
 const LoginButton = styled(Button)({
-  backgroundColor: "#434569",
+  backgroundColor: "#0088a9",
   "&:hover": {
-    backgroundColor: "#434569",
+    backgroundColor: "#0088a9",
   },
 });
 
-export default function SignupPage(props) {
+function SignupPage(props) {
   const history = useHistory();
   const [email, setEmail] = useState("");
+  const [db] = useState(() => initializeFirestore());
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [db] = useState(() => initializeFirestore());
-  const [isPAsswordvisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const snackbarMessage = useRef("");
 
   const signup = () => {
     if (!email || !password || !confirmPassword) {
-      snackbarMessage.current = "email or password is empty";
+      snackbarMessage.current = "Email / Password seems to be empty";
       setShowSnackbar(true);
       return;
     }
     if (password !== confirmPassword) {
-      snackbarMessage.current = "password & confirm password does not match";
+      snackbarMessage.current = "Password & confirmed password does not match";
       setShowSnackbar(true);
       return;
     }
@@ -91,14 +89,12 @@ export default function SignupPage(props) {
     <Box className={style.box}>
       <Typography variant="h4">Signup</Typography>
       <FormControl className={style.formControl}>
-        <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-amount"
+        <Label htmlFor="outlined-adornment-email">Email</Label>
+        <OutlinedTextInput
+          id="outlined-adornment-email"
           value={email}
           type="email"
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
+          onChange={(event) => setEmail(event.target.value)}
           startAdornment={
             <InputAdornment position="start">
               <Email />
@@ -106,18 +102,15 @@ export default function SignupPage(props) {
           }
           label="Email"
           required
-        ></OutlinedInput>
+        />
       </FormControl>
-
       <FormControl className={style.formControl}>
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+        <Label htmlFor="outlined-adornment-password">Password</Label>
         <OutlinedTextInput
           id="outlined-adornment-password"
           value={password}
-          type={isPAsswordvisible ? "text" : "password"}
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
+          type={isPasswordVisible ? "text" : "password"}
+          onChange={(event) => setPassword(event.target.value)}
           startAdornment={
             <InputAdornment position="start">
               <Lock />
@@ -125,7 +118,7 @@ export default function SignupPage(props) {
           }
           endAdornment={
             <InputAdornment position="end">
-              {isPAsswordvisible ? (
+              {isPasswordVisible ? (
                 <Visibility
                   className={style.passwordIcon}
                   onClick={() => setIsPasswordVisible((prev) => !prev)}
@@ -138,32 +131,28 @@ export default function SignupPage(props) {
               )}
             </InputAdornment>
           }
-          label="Password"
+          label="password"
           required
-        ></OutlinedTextInput>
+        />
       </FormControl>
-
       <FormControl className={style.formControl}>
-        <InputLabel htmlFor="outlined-adornment-confirm-password">
+        <Label htmlFor="outlined-adornment-confirm-password">
           Confirm Password
-        </InputLabel>
+        </Label>
         <OutlinedTextInput
           id="outlined-adornment-confirm-password"
           value={confirmPassword}
           type={"password"}
-          onChange={(event) => {
-            setConfirmPassword(event.target.value);
-          }}
+          onChange={(event) => setConfirmPassword(event.target.value)}
+          label="confirm password"
           startAdornment={
             <InputAdornment position="start">
               <Lock />
             </InputAdornment>
           }
-          label="Confirm Password"
           required
-        ></OutlinedTextInput>
+        />
       </FormControl>
-
       <Box className={style.loginButton}>
         <LoginButton
           fullWidth
@@ -171,14 +160,14 @@ export default function SignupPage(props) {
           startIcon={<AccountCircle />}
           onClick={signup}
         >
-          signup
+          Signup
         </LoginButton>
       </Box>
       <Box className={style.signupButton}>
         <Typography variant="subtitle1">
           Already have an account?
           <span className={style.spacing}></span>
-          <Link to="/login">Login</Link>
+          <Link to="/login">Login Now</Link>
         </Typography>
       </Box>
       <Snackbar
@@ -188,10 +177,16 @@ export default function SignupPage(props) {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         key={`top + right`}
       >
-        <Alert onClose={() => setShowSnackbar(false)} sx={{ width: "100%" }}>
+        <Alert
+          onClose={() => setShowSnackbar(false)}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage.current}
         </Alert>
       </Snackbar>
     </Box>
   );
 }
+
+export default SignupPage;

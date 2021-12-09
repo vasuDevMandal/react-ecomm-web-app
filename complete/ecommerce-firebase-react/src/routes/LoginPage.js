@@ -2,15 +2,14 @@ import React, { useState, useRef } from "react";
 import {
   Box,
   OutlinedInput,
-  InputAdornment,
   FormControl,
   InputLabel,
+  InputAdornment,
   Button,
-  Snackbar,
   Typography,
+  Snackbar,
   styled,
 } from "@mui/material";
-
 import {
   Email,
   Lock,
@@ -18,13 +17,10 @@ import {
   VisibilityOff,
   Login,
 } from "@mui/icons-material";
-
-import style from "../styles/Registration.module.css";
-import Alert from "../components/Alert";
-
-import { Link, useHistory } from "react-router-dom";
-
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Link, useHistory } from "react-router-dom";
+import Alert from "../components/Alert";
+import style from "../styles/Registration.module.css";
 
 const OutlinedTextInput = styled(OutlinedInput)({
   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
@@ -33,37 +29,34 @@ const OutlinedTextInput = styled(OutlinedInput)({
 });
 
 const Label = styled(InputLabel)({
-  "&.MuiinputLabel-root.Mui-focused": {
-    borderColor: "#df5689",
+  "&.MuiInputLabel-root.Mui-focused": {
+    color: "#0088a9",
   },
 });
 
 const LoginButton = styled(Button)({
-  backgroundColor: "#434569",
+  backgroundColor: "#0088a9",
   "&:hover": {
-    backgroundColor: "#434569",
+    backgroundColor: "#0088a9",
   },
 });
 
-export default function LoginPage(props) {
+function LoginPage(props) {
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isPAsswordvisible, setIsPasswordVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const snackbarMessage = useRef("");
 
   const login = () => {
     if (!email || !password) {
-      // alert('invalid')
-      snackbarMessage.current = "email or password is empty";
+      snackbarMessage.current = "Email / Password seems to be empty";
       setShowSnackbar(true);
       return;
     }
     signInWithEmailAndPassword(getAuth(), email, password)
-      .then((userCredentials) => {
-        history.push("/");
-      })
+      .then((userCrdedentials) => history.push("/"))
       .catch((error) => {
         snackbarMessage.current = error.message;
         setShowSnackbar(true);
@@ -76,14 +69,12 @@ export default function LoginPage(props) {
     <Box className={style.box}>
       <Typography variant="h4">Login</Typography>
       <FormControl className={style.formControl}>
-        <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-amount"
+        <Label htmlFor="outlined-adornment-email">Email</Label>
+        <OutlinedTextInput
+          id="outlined-adornment-email"
           value={email}
           type="email"
-          onChange={(event) => {
-            setEmail(event.target.value);
-          }}
+          onChange={(event) => setEmail(event.target.value)}
           startAdornment={
             <InputAdornment position="start">
               <Email />
@@ -91,18 +82,15 @@ export default function LoginPage(props) {
           }
           label="Email"
           required
-        ></OutlinedInput>
+        />
       </FormControl>
-
       <FormControl className={style.formControl}>
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+        <Label htmlFor="outlined-adornment-password">Password</Label>
         <OutlinedTextInput
-          id="outlined-adornment-amount"
+          id="outlined-adornment-password"
           value={password}
-          type={isPAsswordvisible ? "text" : "password"}
-          onChange={(event) => {
-            setPassword(event.target.value);
-          }}
+          type={isPasswordVisible ? "text" : "password"}
+          onChange={(event) => setPassword(event.target.value)}
           startAdornment={
             <InputAdornment position="start">
               <Lock />
@@ -110,7 +98,7 @@ export default function LoginPage(props) {
           }
           endAdornment={
             <InputAdornment position="end">
-              {isPAsswordvisible ? (
+              {isPasswordVisible ? (
                 <Visibility
                   className={style.passwordIcon}
                   onClick={() => setIsPasswordVisible((prev) => !prev)}
@@ -123,9 +111,9 @@ export default function LoginPage(props) {
               )}
             </InputAdornment>
           }
-          label="Password"
+          label="password"
           required
-        ></OutlinedTextInput>
+        />
       </FormControl>
       <Box className={style.loginButton}>
         <LoginButton
@@ -141,7 +129,7 @@ export default function LoginPage(props) {
         <Typography variant="subtitle1">
           Don't have an account?
           <span className={style.spacing}></span>
-          <Link to="/signup">Signup now</Link>
+          <Link to="/signup">Signup Now</Link>
         </Typography>
       </Box>
       <Snackbar
@@ -151,10 +139,16 @@ export default function LoginPage(props) {
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
         key={`top + right`}
       >
-        <Alert onClose={() => setShowSnackbar(false)} sx={{ width: "100%" }}>
+        <Alert
+          onClose={() => setShowSnackbar(false)}
+          severity="error"
+          sx={{ width: "100%" }}
+        >
           {snackbarMessage.current}
         </Alert>
       </Snackbar>
     </Box>
   );
 }
+
+export default LoginPage;
